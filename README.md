@@ -30,21 +30,15 @@ IT security is a bottomless pit, as always.
 
 Seal2 is invoked as follows:
 
-    seal.exe "Path\To\Executable" "Argument1 Argument2 ..."
+    seal.exe "Path\To\Executable Argument1 Argument2 ..."
 
 or just
 
-    seal.exe "Path\To\Executable.exe" ""
+    seal.exe "Path\To\Executable.exe"
 
-if you don't need to give the program any arguments. GUI restrictions are enabled using
-the '--gui' option. For instance:
-
-    seal.exe --gui "C:\Windows\Notepad.exe" ""
-
-**Note that passing arguments to the child program might be finicky right now. Seal2
-currently handles arguments the Linux way, but Windows might not agree on what
-constitutes proper quoting. If in doubt, you should probably forego the command line
-arguments.**
+Note that, when passing command line arguments to the child program, the command and arguments
+**must be quoted.** Seal2 must receive the program and arguments as a single string, otherwise
+it will fail.
 
 ## Compiling
 
