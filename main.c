@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 	
 	if (argc < 2)
 	{
-		printf("%s\n", "Usage: seal2.exe [--gui] <'Path\\To\\Executable arg1 arg2 ...'>");
+		printf("%s\n", "Usage: seal2.exe [--gui] <\"Path\\To\\Executable arg1 arg2 ...\">");
 		exit(0);
 	}
 	
