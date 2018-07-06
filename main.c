@@ -9,15 +9,20 @@ int main(int argc, char *argv[])
 	
 	if (argc < 2)
 	{
-		printf("%s\n", "Usage: seal2.exe [--gui] <\"Path\\To\\Executable arg1 arg2 ...\">");
+		printf("%s\n", "Usage: seal2.exe [--gui] [--gui-light] <\"Path\\To\\Executable arg1 arg2 ...\">");
 		exit(0);
 	}
 	
 	for (; i < argc - 1; i++)
 	{
-		char test_str[] = "--gui";
-		if (0 == strncmp(test_str, argv[i], sizeof(test_str) - 1)) {
+		const char arg_gui[] = "--gui";
+		const char arg_gui_light[] = "--gui-light";
+
+		if (0 == strncmp(arg_gui, argv[i], sizeof(arg_gui) - 1)) {
 			restrictions |= RESTRICT_GUI;
+		}
+		else if (0 == strncmp(arg_gui_light, argv[i], sizeof(arg_gui_light) - 1)) {
+			restrictions |= RESTRICT_GUI_LIGHT
 		}
 	}
 	

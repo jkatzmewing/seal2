@@ -22,7 +22,7 @@ int seal2_launch(int restrictions, char *command)
 		return ERR_JOB_RESTRICT_EXEC_FAILED;
 	}
 	
-	if (restrictions & RESTRICT_GUI)
+	if ((restrictions & RESTRICT_GUI) || (restrictions & RESTRICT_GUI_LIGHT))
 	{
 		if (!seal2_job_restrict_gui(my_job))
 		{
@@ -66,9 +66,9 @@ int seal2_job_restrict_exec(HANDLE job_handle)
 	job_limits.ActiveProcessLimit = 0x01; /* Only this one process */
 	
 	if (!SetInformationJobObject(job_handle,
-								 JobObjectBasicLimitInformation,
-								 &job_limits,
-								 sizeof(JOBOBJECT_BASIC_LIMIT_INFORMATION)))
+				     JobObjectBasicLimitInformation,
+				     &job_limits,
+				     sizeof(JOBOBJECT_BASIC_LIMIT_INFORMATION)))
 	{
 		return FALSE;
 	}
@@ -81,10 +81,16 @@ int seal2_job_restrict_gui(HANDLE job_handle)
 	JOBOBJECT_BASIC_UI_RESTRICTIONS job_ui_rules;
 	job_ui_rules.UIRestrictionsClass = 0xFF; /* All possible UI restrictions */
 
+	if (restrictions & RESTRICT_GUI_LIGHT)
+	{
+		job_ui_rules &= ~JOB_OBJECT_UILIMIT_READCLIPBOARD;
+		job_ui_rules &= ~JOB_OBJECT_UILIMIT_WRITECLIPBOARD;
+	}
+
 	if (!SetInformationJobObject(job_handle,
-								 JobObjectBasicUIRestrictions,
-								 &job_ui_rules,
-								 sizeof(JOBOBJECT_BASIC_UI_RESTRICTIONS)))
+				     JobObjectBasicUIRestrictions,
+				     &job_ui_rules,
+				     sizeof(JOBOBJECT_BASIC_UI_RESTRICTIONS)))
 	{
 		return FALSE;
 	}
@@ -99,13 +105,14 @@ void error_message(void)
 	
 	/* Usage the ANSI FormatMessageA function so this works with printf etc. */
 	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				   FORMAT_MESSAGE_FROM_SYSTEM |
-				   FORMAT_MESSAGE_IGNORE_INSERTS,
-				   NULL,
-				   err,
-				   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				   buffer,
-				   0, NULL);	
+		       FORMAT_MESSAGE_FROM_SYSTEM |
+		       FORMAT_MESSAGE_IGNORE_INSERTS,
+		       NULL,
+		       err,
+		       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		       buffer,
+		       0,
+                       NULL);	
 
 	fprintf(stderr, "%s\n", buffer);
 	LocalFree(buffer);
